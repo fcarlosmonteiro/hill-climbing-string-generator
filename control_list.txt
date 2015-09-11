@@ -1,0 +1,5 @@
+Mutation-based Statistical Test Inputs Generation for Automatic Fault Localization
+A Comparison of Tabular Expression-Based Testing Strategies
+A cross-level verification methodology for digital IPs augmented with embedded timing monitors
+A Dataflow Testing Approach for Aspect-Oriented Programs
+A Decision-Tree Based Approach for Mutation Testing

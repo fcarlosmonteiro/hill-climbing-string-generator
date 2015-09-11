@@ -1,0 +1,3 @@
+structural testing
+
+fault detection
