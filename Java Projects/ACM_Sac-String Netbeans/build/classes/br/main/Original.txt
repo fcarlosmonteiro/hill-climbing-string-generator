@@ -5,3 +5,7 @@ Experience
 Test oracle
 testing oracle
 oracle
+
+method
+technique
+approach

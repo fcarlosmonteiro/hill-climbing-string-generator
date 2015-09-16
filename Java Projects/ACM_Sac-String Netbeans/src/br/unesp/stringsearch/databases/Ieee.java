@@ -234,6 +234,7 @@
         }
 
 		//	 sb.append("\"Abstract\":\"");
+        sb.append("\"");
         try {
             sb.append(((String) wc.get(o - 1)).trim());
         } catch (Exception e) {

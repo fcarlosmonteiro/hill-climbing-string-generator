@@ -213,7 +213,18 @@ public class Neiborhood {
 	{
 		ArrayList<String> firstPart = searchString.getPart1();		
 		String toBeReplaced =   firstPart.get(order);
-		
+		String firstPeace = "";
+                boolean doubleTerm = false;
+                
+                if (toBeReplaced.contains(" "))
+                {
+                    
+                    firstPeace = toBeReplaced.substring(0, toBeReplaced.indexOf(" ")); //toBeReplaced.split(toBeReplaced);
+                    toBeReplaced = toBeReplaced.substring(toBeReplaced.indexOf(" ")+1, toBeReplaced.length());
+                    //firstPeace = parts[0];
+                    doubleTerm = true;
+                }
+                
                 //System.out.println(" --- "+toBeReplaced);
                 
 		Stemmer stKW = new Stemmer();		
@@ -222,6 +233,12 @@ public class Neiborhood {
                 //System.out.println(" -- RADICAL -- "+radical);
 		
                 radical = setLastChar(radical);
+                
+                if (doubleTerm)
+                {
+                //adicionar primeira parte no radical
+                radical = firstPeace+" "+radical;
+                }
                 
 		//firstPart.set(order, radical);
                  firstPart.set(order, radical+"*");

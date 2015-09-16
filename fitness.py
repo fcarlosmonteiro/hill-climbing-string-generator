@@ -298,6 +298,7 @@ def fitness_function(studies, controled_studies, log = None):
 	else:
 		print info
 
+	total_studies = len(studies)
 
 	#Get the number of controled studies
 	number_of_controled_studies = len(controled_studies)
@@ -322,8 +323,13 @@ def fitness_function(studies, controled_studies, log = None):
 		relevant_studies_a, fitnessA = abstract_fitness(relevant_studies_k)
 
 	#Number of controled studies studies minus the number of controled studies found
-	irrelevant_studies = number_of_controled_studies - identified_CS
+
 	total_relevant = (len(relevant_studies_k) + len(relevant_studies_a)) / 2
+
+	irrelevant_studies = total_studies - total_relevant  #Correto
+
+	#irrelevant_studies = number_of_controled_studies - identified_CS #Reproduzir bug do segundo termo da string
+
 
 	#Calculate Precision and sensibility. This metrics are defined in the paper
 	try:

@@ -206,21 +206,21 @@ def hillclimb(init_function, objective_function, max_evaluations, log = None):
         #Increase the number of evaluations
         num_evaluations += 1
 
-        if not move_made:
+        #if not move_made:
 
-            info = 'I: The neighborhood of this iteration produced no string better than the  candidate string: %s \n' % (current_string)
-            info = 'I: Fitness obtained: %f \n' % best_score
+            #info = 'I: The neighborhood of this iteration produced no string better than the  candidate string: %s \n' % (current_string)
+            #info = 'I: Fitness obtained: %f \n' % best_score
 
             #Just logging
-            if log:
-                log.write(info)
-                log.write(info2)
-            else:
-                print info
-                print info2
+            #if log:
+                #log.write(info)
+                #log.write(info2)
+            #else:
+                #print info
+                #print info2
 
 
-            break    # we couldn't find a better move. (must be at a local maximum)
+            #break    # we couldn't find a better move. (must be at a local maximum)
 
 
         info = 'I: Updating the source files.. \n'
@@ -276,7 +276,7 @@ if __name__ == '__main__':
 
     #Define the log variable. If it's None so print the information in terminal. If it's a file, all the information will be saved inside this file.
     log = None
-    #log = file('log.txt', w+)
+    #log = file('log.txt', 'a')
 
     info = "I: ============== Starting a new execution ============== \n"
 
@@ -287,6 +287,25 @@ if __name__ == '__main__':
 
     #If log save the information into a file, else just print everything into console
     if log:
-        hillclimb(init_function, objective_function, max_evaluations, log)
+        num_evaluations,best_score,current_string = hillclimb(init_function, objective_function, max_evaluations, log)
     else:
-                hillclimb(init_function, objective_function, max_evaluations)
+        num_evaluations,best_score,current_string = hillclimb(init_function, objective_function, max_evaluations)
+
+
+    info  = 'Number of evaluations at the end: %d \n' % num_evaluations
+    info2 = 'Best score achived: %f \n' % best_score
+    info3 = 'Best string produced: %s \n' % current_string
+
+    info4 = "I: ============== Endding the execution ============== \n"
+
+    #Just logging
+    if log:
+        log.write(info)
+        log.write(info2)
+        log.write(info3)
+        log.write(info4)
+    else:
+        print info
+        print info2
+        print info3
+        print info4

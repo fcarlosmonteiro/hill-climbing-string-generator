@@ -1,3 +1,11 @@
-structural testing
+mutation analysis
+mutation testing
 
-fault detection
+test data generator
+test data generation
+test case generation
+
+technique
+approach
+method
+
