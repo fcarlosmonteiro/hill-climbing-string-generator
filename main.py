@@ -2,7 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import os
+import csv
 import sys
+import time
+
+
 from extra import *
 from util import *
 from engine import *
@@ -65,6 +69,10 @@ def objective_function(original_string):
         #Now will process the XML genereted. This will return a list with all studies returned by the search
         studies = process_xml()  #studies is a list with the following model for each item: [title ,author,abstract,keys]
 
+        total_fitness = 0.0
+        sensibility = 0.0
+        precision = 0.0
+
         #Check if there is a valid list retrived from XML.. If ocurred some error, just define a negative value to the fitness
         if (len(studies)) > 0:
 
@@ -72,12 +80,12 @@ def objective_function(original_string):
             control_studies_list = get_control_list()
 
             #Need evaluate this string
-            total_fitness = fitness_function(studies, control_studies_list)
+            total_fitness, sensibility, precision = fitness_function(studies, control_studies_list)
 
         else:
             total_fitness = -1
 
-        return total_fitness
+        return total_fitness, sensibility, precision
 
 
 
@@ -98,7 +106,7 @@ def hillclimb(init_function, objective_function, max_evaluations, log = None):
     empty = "\"\"" #empty therm to look at the string
 
     current_string, neighbor_list = init_function()  #original
-    best_score = objective_function(current_string) #get the best score to original string
+    best_score, best_sensibility, best_precision = objective_function(current_string) #get the best score to original string
 
     num_evaluations = 1
 
@@ -138,7 +146,7 @@ def hillclimb(init_function, objective_function, max_evaluations, log = None):
                 break
 
             # see if this move is better than the current
-            next_score = objective_function(neighbor)
+            next_score, next_sensibility, next_precision = objective_function(neighbor)
 
             #Invalid string or dont return nothing..
             if next_score < 0:
@@ -158,14 +166,20 @@ def hillclimb(init_function, objective_function, max_evaluations, log = None):
 
             info = 'I: Fitness produced: %f \n' % next_score
             info2 = 'I: Evaluation: %d \n' % num_evaluations
+            info3 = 'I: Sensibility produced %f \n' % next_sensibility
+            info4 = 'I: Precision produced %f \n' % next_precision
 
             #Just logging
             if log:
                 log.write(info)
                 log.write(info2)
+                log.write(info3)
+                log.write(info4)
             else:
                 print info
                 print info2
+                print info3
+                print info4
 
 
             if next_score > best_score:
@@ -175,7 +189,9 @@ def hillclimb(init_function, objective_function, max_evaluations, log = None):
                 info2 = 'I: Current string: ', current_string
                 info3 = 'I: Current fitness: ', best_score
                 info4 = 'I: Better string: ', neighbor
-                info5 = 'I: Better fitness: ', next_score
+                info5 = 'I: Better precision: ', next_precision
+                info7 = 'I: Better sensibility: ', next_sensibility
+                info8 = 'I: Better fitness: ', next_score
                 info6 = 'I: Number of evaluations until the moment: %d \n' % (num_evaluations)
 
                 #Just logging
@@ -185,6 +201,8 @@ def hillclimb(init_function, objective_function, max_evaluations, log = None):
                     log.write(info3)
                     log.write(info4)
                     log.write(info5)
+                    log.write(info7)
+                    log.write(info8)
                     log.write(info6)
                 else:
                     print info
@@ -192,11 +210,16 @@ def hillclimb(init_function, objective_function, max_evaluations, log = None):
                     print info3
                     print info4
                     print info5
+                    print info7
+                    print info8
                     print info6
 
 
+                #Update the value of the best solution
                 current_string = neighbor
                 best_score = next_score
+                best_sensibility = next_sensibility
+                best_precision = next_precision
                 move_made = True
 
                 break # depth first search
@@ -205,22 +228,6 @@ def hillclimb(init_function, objective_function, max_evaluations, log = None):
 
         #Increase the number of evaluations
         num_evaluations += 1
-
-        #if not move_made:
-
-            #info = 'I: The neighborhood of this iteration produced no string better than the  candidate string: %s \n' % (current_string)
-            #info = 'I: Fitness obtained: %f \n' % best_score
-
-            #Just logging
-            #if log:
-                #log.write(info)
-                #log.write(info2)
-            #else:
-                #print info
-                #print info2
-
-
-            #break    # we couldn't find a better move. (must be at a local maximum)
 
 
         info = 'I: Updating the source files.. \n'
@@ -248,7 +255,7 @@ def hillclimb(init_function, objective_function, max_evaluations, log = None):
         current_string, neighbor_list = init_function()
 
     #return number of evaluations, the best score and the initial solution
-    return (num_evaluations,best_score,current_string)
+    return num_evaluations,best_score,current_string, best_precision, best_sensibility
 
 
 
@@ -266,6 +273,7 @@ def java_program_call():
 
 
 if __name__ == '__main__':
+
 
     #Verify the execution
     if len(sys.argv) < 2:
@@ -285,18 +293,32 @@ if __name__ == '__main__':
     else:
         print info
 
+
+    #mesure the execution time
+    init = time.time() #Get the timer at the start point
+
+
     #If log save the information into a file, else just print everything into console
     if log:
-        num_evaluations,best_score,current_string = hillclimb(init_function, objective_function, max_evaluations, log)
+        num_evaluations, best_score, best_string, best_precision, best_sensibility = hillclimb(init_function, objective_function, max_evaluations, log)
     else:
-        num_evaluations,best_score,current_string = hillclimb(init_function, objective_function, max_evaluations)
+        num_evaluations, best_score, best_string, best_precision, best_sensibility = hillclimb(init_function, objective_function, max_evaluations)
+
+    #mesure the execution time
+    end = time.time() #Get the timer at the end point
+
+    #total time
+    total_time = end - init
 
 
     info  = 'Number of evaluations at the end: %d \n' % num_evaluations
-    info2 = 'Best score achived: %f \n' % best_score
-    info3 = 'Best string produced: %s \n' % current_string
+    info2 = 'Sensibility value: %s \n' % best_sensibility
+    info3 = 'Precision value: %s \n' % best_precision
+    info4 = 'Best score achived: %f \n' % best_score
+    info5 = 'Best string produced: %s \n' % best_string
+    info6 = 'Execution time: %f seconds \n' % total_time
 
-    info4 = "I: ============== Endding the execution ============== \n"
+    info7 = "I: ============== Endding the execution ============== \n"
 
     #Just logging
     if log:
@@ -304,8 +326,30 @@ if __name__ == '__main__':
         log.write(info2)
         log.write(info3)
         log.write(info4)
+        log.write(info5)
+        log.write(info6)
+        log.write(info7)
     else:
         print info
         print info2
         print info3
         print info4
+        print info5
+        print info6
+        print info7
+
+
+    #Save the execution information into a CSV file
+    csv_name = 'results.csv'      #Define the name of the csv
+    csv_file = open(csv_name,'a') #Open in append mode
+    spam_writer = csv.writer(csv_file, dialect='excel') #Create a object that convert the user's data to a CSV formated
+
+    #Save the data into the file
+    spam_writer.writerow([best_string, best_sensibility, best_precision, total_time])
+
+
+    #Close the files
+    if log:
+        log.close()
+
+    csv_file.close()

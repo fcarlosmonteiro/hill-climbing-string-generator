@@ -1,3 +1,3 @@
-an integrated system for automatically generating test data
-constraint-based automatic test data generation
-strategy for mutation testing using genetic algorithms
+Model-Based Security Vulnerability Testing
+Test Generation from Security Policies Specified in Or-BAC
+Testing access control and obligation policies

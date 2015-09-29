@@ -333,12 +333,17 @@ def fitness_function(studies, controled_studies, log = None):
 
 	#Calculate Precision and sensibility. This metrics are defined in the paper
 	try:
-		sensibility = (len(relevant_studies_a) / (len(relevant_studies_a) + identified_CS))
+		if identified_CS==number_of_controled_studies:
+			sensibility = total_relevant / (total_relevant + identified_CS)+1
+		elif identified_CS<1:
+			sensibility = total_relevant / (total_relevant + identified_CS)-1
+		else:
+			sensibility = total_relevant / (total_relevant + identified_CS)
 	except ZeroDivisionError:
 		sensibility = 0
 
 	try:
-		precision = (len(relevant_studies_a) / (len(relevant_studies_a) + irrelevant_studies))
+		precision = total_relevant / (total_relevant + irrelevant_studies)
 	except ZeroDivisionError:
 		precision = 0
 
@@ -365,4 +370,4 @@ def fitness_function(studies, controled_studies, log = None):
 		print info2
 		print info3
 
-	return total_fitness
+	return total_fitness, sensibility, precision
